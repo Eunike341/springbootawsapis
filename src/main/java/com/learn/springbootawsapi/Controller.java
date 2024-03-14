@@ -12,4 +12,9 @@ public class Controller {
     public String sayHello () {
         return "hello springmiscapis";
     }
+
+    @GetMapping("/springmiscapis2")
+    public String miscapis2 () {
+        return "hello springmiscapis2";
+    }
 }
