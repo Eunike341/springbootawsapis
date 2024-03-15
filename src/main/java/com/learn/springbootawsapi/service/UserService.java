@@ -5,6 +5,11 @@ import com.learn.springbootawsapi.repository.User;
 import com.learn.springbootawsapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
 
@@ -27,5 +32,14 @@ public class UserService {
         this.userRepository.save(user);
         System.out.println("===========after calling repository");
         return new UserDto(user);
+    }
+
+    public List<UserDto> getUsers () {
+        System.out.println("====getUsers is called");
+        return Optional.ofNullable(userRepository.findAll())
+                .stream()
+                .flatMap(Collection::stream)
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
 }
