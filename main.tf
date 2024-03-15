@@ -91,7 +91,7 @@ resource "aws_api_gateway_method" "SpringMiscMethod" {
 
 resource "aws_lambda_function" "spring_misc_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "spring_misc_function"
 
@@ -156,7 +156,7 @@ resource "aws_api_gateway_method" "SpringMisc2Method" {
 
 resource "aws_lambda_function" "spring_misc2_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "spring_misc2_function"
 
@@ -213,22 +213,17 @@ resource "aws_api_gateway_resource" "ParentUserResource" {
 ##############
 
 ################addUser################
-resource "aws_api_gateway_resource" "AddUserResource" {
-  rest_api_id = aws_api_gateway_rest_api.SpringMiscAPI.id
-  parent_id   = aws_api_gateway_resource.ParentUserResource.id
-  path_part   = "adduser"
-}
 
 resource "aws_api_gateway_method" "AddUserMethod" {
   rest_api_id   = aws_api_gateway_rest_api.SpringMiscAPI.id
-  resource_id   = aws_api_gateway_resource.AddUserResource.id
+  resource_id   = aws_api_gateway_resource.ParentUserResource.id
   http_method   = "POST"
   authorization = "NONE"
 }
 
 resource "aws_lambda_function" "add_user_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "add_user_function"
 
@@ -263,12 +258,12 @@ resource "aws_lambda_permission" "add_user_function" {
   principal     = "apigateway.amazonaws.com"
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.AddUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}/${aws_api_gateway_resource.AddUserResource.path_part}"
+  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.AddUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}"
 }
 
 resource "aws_api_gateway_integration" "add_user_integration" {
   rest_api_id             = aws_api_gateway_rest_api.SpringMiscAPI.id
-  resource_id             = aws_api_gateway_resource.AddUserResource.id
+  resource_id             = aws_api_gateway_resource.ParentUserResource.id
   http_method             = aws_api_gateway_method.AddUserMethod.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -278,22 +273,16 @@ resource "aws_api_gateway_integration" "add_user_integration" {
 }
 
 ################getUser################
-resource "aws_api_gateway_resource" "GetUserResource" {
-  rest_api_id = aws_api_gateway_rest_api.SpringMiscAPI.id
-  parent_id   = aws_api_gateway_resource.ParentUserResource.id
-  path_part   = "getuser"
-}
-
 resource "aws_api_gateway_method" "GetUserMethod" {
   rest_api_id   = aws_api_gateway_rest_api.SpringMiscAPI.id
-  resource_id   = aws_api_gateway_resource.GetUserResource.id
+  resource_id   = aws_api_gateway_resource.ParentUserResource.id
   http_method   = "GET"
   authorization = "NONE"
 }
 
 resource "aws_lambda_function" "get_user_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "get_user_function"
 
@@ -326,14 +315,12 @@ resource "aws_lambda_permission" "get_user_function" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.get_user_function.function_name
   principal     = "apigateway.amazonaws.com"
-  # The /*/* portion grants access from any method on any resource
-  # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.GetUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}/${aws_api_gateway_resource.GetUserResource.path_part}"
+  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.GetUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}"
 }
 
 resource "aws_api_gateway_integration" "get_user_integration" {
   rest_api_id             = aws_api_gateway_rest_api.SpringMiscAPI.id
-  resource_id             = aws_api_gateway_resource.GetUserResource.id
+  resource_id             = aws_api_gateway_resource.ParentUserResource.id
   http_method             = aws_api_gateway_method.GetUserMethod.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"

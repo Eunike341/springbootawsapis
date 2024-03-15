@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @EnableWebMvc
-@RequestMapping("/user")
 public class MiscController {
 
     private final UserService userService;
@@ -21,7 +20,7 @@ public class MiscController {
     }
 
 
-    @PostMapping("/adduser")
+    @PostMapping("/user")
     public UserDto addUser (@RequestBody(required = false) UserDto user) {
         System.out.println("==========addUser is called with user:" + user);
         if(user == null) {
@@ -39,7 +38,7 @@ public class MiscController {
 //        return userService.getUsers();
     }
 
-    @GetMapping("/getuser")
+    @GetMapping("/user")
     public List<UserDto> getUser () {
         System.out.println("==========getuser is called");
         return userService.getUsers();
