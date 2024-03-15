@@ -46,7 +46,6 @@ resource "aws_iam_policy" "iam_policy_for_lambda_all" {
         "Sid": "LambdaPolicy",
         "Effect": "Allow",
         "Action": [
-          "cloudwatch:PutMetricData",
           "ec2:CreateNetworkInterface",
           "ec2:DescribeNetworkInterfaces",
           "ec2:DescribeSubnets",
@@ -55,10 +54,7 @@ resource "aws_iam_policy" "iam_policy_for_lambda_all" {
           "ec2:UnassignPrivateIpAddresses",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents",
-          "rds:*",
-          "xray:PutTelemetryRecords",
-          "xray:PutTraceSegments"
+          "logs:PutLogEvents"
         ],
         "Resource": "*"
       }
@@ -95,7 +91,7 @@ resource "aws_api_gateway_method" "SpringMiscMethod" {
 
 resource "aws_lambda_function" "spring_misc_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "spring_misc_function"
 
@@ -160,7 +156,7 @@ resource "aws_api_gateway_method" "SpringMisc2Method" {
 
 resource "aws_lambda_function" "spring_misc2_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "spring_misc2_function"
 
@@ -208,10 +204,18 @@ resource "aws_api_gateway_integration" "spring_misc2_integration" {
     aws_lambda_permission.spring_misc2_function]
 }
 
+#####user#########
+resource "aws_api_gateway_resource" "ParentUserResource" {
+  rest_api_id = aws_api_gateway_rest_api.SpringMiscAPI.id
+  parent_id   = aws_api_gateway_rest_api.SpringMiscAPI.root_resource_id
+  path_part   = "user"
+}
+##############
+
 ################addUser################
 resource "aws_api_gateway_resource" "AddUserResource" {
   rest_api_id = aws_api_gateway_rest_api.SpringMiscAPI.id
-  parent_id   = aws_api_gateway_rest_api.SpringMiscAPI.root_resource_id
+  parent_id   = aws_api_gateway_resource.ParentUserResource.id
   path_part   = "adduser"
 }
 
@@ -224,7 +228,7 @@ resource "aws_api_gateway_method" "AddUserMethod" {
 
 resource "aws_lambda_function" "add_user_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "add_user_function"
 
@@ -259,7 +263,7 @@ resource "aws_lambda_permission" "add_user_function" {
   principal     = "apigateway.amazonaws.com"
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.AddUserMethod.http_method}/${aws_api_gateway_resource.AddUserResource.path_part}"
+  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.AddUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}/${aws_api_gateway_resource.AddUserResource.path_part}"
 }
 
 resource "aws_api_gateway_integration" "add_user_integration" {
@@ -276,7 +280,7 @@ resource "aws_api_gateway_integration" "add_user_integration" {
 ################getUser################
 resource "aws_api_gateway_resource" "GetUserResource" {
   rest_api_id = aws_api_gateway_rest_api.SpringMiscAPI.id
-  parent_id   = aws_api_gateway_rest_api.SpringMiscAPI.root_resource_id
+  parent_id   = aws_api_gateway_resource.ParentUserResource.id
   path_part   = "getuser"
 }
 
@@ -289,7 +293,7 @@ resource "aws_api_gateway_method" "GetUserMethod" {
 
 resource "aws_lambda_function" "get_user_function" {
   runtime          = "java17"
-  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT1.jar"
+  filename      = "target/springbootawsapi-0.0.1-SNAPSHOT.jar"
   #source_code_hash = "${base64sha256(file(var.lambda_payload_filename))}"
   function_name = "get_user_function"
 
@@ -324,7 +328,7 @@ resource "aws_lambda_permission" "get_user_function" {
   principal     = "apigateway.amazonaws.com"
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.GetUserMethod.http_method}/${aws_api_gateway_resource.GetUserResource.path_part}"
+  source_arn = "${aws_api_gateway_rest_api.SpringMiscAPI.execution_arn}/*/${aws_api_gateway_method.GetUserMethod.http_method}/${aws_api_gateway_resource.ParentUserResource.path_part}/${aws_api_gateway_resource.GetUserResource.path_part}"
 }
 
 resource "aws_api_gateway_integration" "get_user_integration" {

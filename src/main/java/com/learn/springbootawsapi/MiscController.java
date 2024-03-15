@@ -2,10 +2,7 @@ package com.learn.springbootawsapi;
 
 import com.learn.springbootawsapi.model.UserDto;
 import com.learn.springbootawsapi.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @EnableWebMvc
+@RequestMapping("/user")
 public class MiscController {
 
     private final UserService userService;
